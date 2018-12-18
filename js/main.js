@@ -24,7 +24,7 @@ $(document ).ready(() => {
                         humanHeight = 17,
                         pokemonHeight = response.height;
 
-                    if (pokemonHeight > cap) {
+                    if (pokemonHeight >= cap) {
                         cap = pokemonHeight
                     }
 
@@ -87,19 +87,49 @@ $(document ).ready(() => {
         function changeHumanHeight(cap, height) {
             var percentageHeight = (height / cap) * 100;
             $(".person-image").height(percentageHeight + '%')
-
         }
 
-        function setScale(cap, pokemonHeight) {
-            for (let i = 0; i <= cap ; i++) {
-                console.log('here');
-                $('.measurement-bar').append('<li class="ruler"></li>').height(cap + '%');
-               
+        function setScale(cap) {
+            var measurementBar = $('.measurement-bar'),
+                increase = 2;
+
+
+            if (cap >= 21) {
+                increase = 5;
             }
 
-            $('#progBar').animate( {
-                'height': (pokemonHeight / cap) * 100 + '%'
-            }, 3000 );
+            if (cap >= 50) {
+                increase = 10;
+            }
+
+            if (cap >= 100) {
+                increase = 20;
+            }
+
+            measurementBar.empty();
+            for (let i = 0; i <= cap ; i = i + increase) {
+                console.log('here');
+                var scalePosition = ((i / cap) * 100);
+                console.log(scalePosition);
+
+                var element = {
+                    class: "ruler",
+                    css: {
+                        "bottom": scalePosition + '%'
+                    }
+                };
+
+                var ruler = $('<li>', element);
+                ruler.html(i + 'cm');
+                measurementBar.append(ruler);
+
+            }
+
+
+            //
+            // $('#progBar').animate( {
+            //     'height': (pokemonHeight / cap) * 100 + '%'
+            // }, 3000 );
         }
 
     });

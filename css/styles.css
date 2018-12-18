@@ -36,6 +36,8 @@ h2 {
     height: 600px;
     padding: 20px;
     box-sizing: border-box;
+    position: relative;
+    margin-bottom: 20px;
 }
 
 
@@ -109,8 +111,8 @@ h2 {
     height: 81%;
     bottom: 0;
     position: absolute;
-    margin-bottom: 20px;
 }
+
 
 .pokemon-image {
     position: absolute;
@@ -143,10 +145,12 @@ h2 {
     border-left: 6px solid white;
     border-bottom: 1px solid #CCCCCC;
     color: white;
-    height: 8%;
     list-style: none;
     text-align: right;
     width: 80px;
+    position: absolute;
+    left: 0;
+    height: 10px;
 }
 
 .measurement-bar {
@@ -155,11 +159,11 @@ h2 {
     float: left;
     position: absolute;
     bottom: 5px;
+
 }
 
 .sprite {
     min-width: 70%;
-    position: relative;
 }
 
 .box {
