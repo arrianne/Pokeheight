@@ -7,7 +7,7 @@ $(document ).ready(() => {
 
         userInput = $('#searchText').val().toLowerCase();
         console.log(userInput)
-        
+
 
         $.ajax ({
             type: "GET",
@@ -33,7 +33,7 @@ $(document ).ready(() => {
 
                     setScale(cap, pokemonHeight);
 
-                    // make the animation bar move up the appropriate percentage
+                    //Calling the measurement bar animation based on pokemon height from API
                     animateProgressBar(response.height);
 
 
@@ -58,7 +58,7 @@ $(document ).ready(() => {
             console.log(`Pokemon Height %: ${pokemonHeightPercent}`);
             $(heightBar).animate( {
                 'height': pokemonHeightPercent + '%'
-            }, 3000 );
+            }, 2000 );
 
         }
 
@@ -90,15 +90,15 @@ $(document ).ready(() => {
          * Function that uses the cap height in order to determin the value of the ruler lines
          * @param cap
          */
+
         function setScale(cap) {
             var measurementBar = $('.measurement-bar'),
                 increase = (cap / 10);
-                // percentageHeight = (height / cap) * 100;
 
             measurementBar.empty();
             for (let i = 0; i <= cap ; i = i + increase) {
                 console.log('here');
-                var scalePosition = ((i / cap) * 100);
+                var scalePosition = (i / cap) * 100;
                 console.log(scalePosition);
 
                 var element = {
@@ -109,7 +109,7 @@ $(document ).ready(() => {
                 };
 
                 var ruler = $('<li>', element);
-                ruler.html((i * 10) + 'cm');
+                ruler.html(Math.round(i * 10) + 'cm');
                 measurementBar.append(ruler);
 
             }
