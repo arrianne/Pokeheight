@@ -5,12 +5,9 @@ $(document ).ready(() => {
         e.preventDefault();
 
 
-
         userInput = $('#searchText').val().toLowerCase();
         console.log(userInput)
-
-        $('#progBar').val(70);
-
+        
 
         $.ajax ({
             type: "GET",
@@ -37,7 +34,7 @@ $(document ).ready(() => {
                     setScale(cap, pokemonHeight);
 
                     // make the animation bar move up the appropriate percentage
-                    // animateProgressBar(response.height);
+                    animateProgressBar(response.height);
 
 
 
@@ -52,18 +49,18 @@ $(document ).ready(() => {
         });
 
 
-        // function animateProgressBar(pokemonHeight) {
-        //
-        //     var tallestHeight = 21,
-        //         pokemonHeightPercent = ((pokemonHeight) / tallestHeight ) * 100,
-        //         heightBar = $('#progBar');
-        //
-        //     console.log(`Pokemon Height %: ${pokemonHeightPercent}`);
-        //     $(heightBar).animate( {
-        //         'height': pokemonHeightPercent + '%'
-        //     }, 3000 );
-        //
-        // }
+        function animateProgressBar(pokemonHeight) {
+
+            var tallestHeight = 21,
+                pokemonHeightPercent = ((pokemonHeight) / tallestHeight ) * 100,
+                heightBar = $('#progBar');
+
+            console.log(`Pokemon Height %: ${pokemonHeightPercent}`);
+            $(heightBar).animate( {
+                'height': pokemonHeightPercent + '%'
+            }, 3000 );
+
+        }
 
 
         /**
@@ -89,22 +86,14 @@ $(document ).ready(() => {
             $(".person-image").height(percentageHeight + '%')
         }
 
+        /**
+         * Function that uses the cap height in order to determin the value of the ruler lines
+         * @param cap
+         */
         function setScale(cap) {
             var measurementBar = $('.measurement-bar'),
-                increase = 2;
-
-
-            if (cap >= 21) {
-                increase = 5;
-            }
-
-            if (cap >= 50) {
-                increase = 10;
-            }
-
-            if (cap >= 100) {
-                increase = 20;
-            }
+                increase = (cap / 10);
+                // percentageHeight = (height / cap) * 100;
 
             measurementBar.empty();
             for (let i = 0; i <= cap ; i = i + increase) {
@@ -125,11 +114,6 @@ $(document ).ready(() => {
 
             }
 
-
-            //
-            // $('#progBar').animate( {
-            //     'height': (pokemonHeight / cap) * 100 + '%'
-            // }, 3000 );
         }
 
     });
