@@ -82,7 +82,8 @@ $(document ).ready(() => {
             var percentageHeight = (height / cap) * 100;
             //Getting the sprite image from api by using input search and adding to end of sprite url
             //Change the size of the image as a percentage of the cap height
-            $("#sprite").attr("src", 'http://www.pokestadium.com/sprites/xy/' + userInput + '.gif').height(percentageHeight + '%');
+            $("#sprite").attr("src", 'http://www.pokestadium.com/sprites/xy/' + userInput + '.gif')
+                .animate( {'height': percentageHeight + '%'}, 2000 );
 
         }
 
@@ -94,7 +95,8 @@ $(document ).ready(() => {
         function changeHumanHeight(cap, height) {
             var percentageHeight = (height / cap) * 100;
             //Change the size of the person as a percentage of the pokemon height
-            $(".person-image").height(percentageHeight + '%')
+            $(".person-image")
+                .animate( {'height': percentageHeight + '%'}, 2000 );
         }
 
         /**
