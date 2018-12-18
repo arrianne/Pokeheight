@@ -28,6 +28,8 @@ $(document ).ready(() => {
                         cap = pokemonHeight
                     }
 
+                    $("#pokemon-height").html(`${response.height * 10}cm tall!`);
+
                     changePokemonHeight(cap, pokemonHeight, userInput);
                     changeHumanHeight(cap, humanHeight);
 
@@ -91,8 +93,8 @@ $(document ).ready(() => {
         function setScale(cap, pokemonHeight) {
             for (let i = 0; i <= cap ; i++) {
                 console.log('here');
-                $('.measurement-bar').append('<li class="ruler"></li>');
-                // $('[data-role=listview]').listview('refresh');
+                $('.measurement-bar').append('<li class="ruler"></li>').height(cap + '%');
+               
             }
 
             $('#progBar').animate( {
