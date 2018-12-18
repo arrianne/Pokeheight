@@ -120,7 +120,7 @@ $(document ).ready(() => {
                 };
 
                 var ruler = $('<li>', element);
-                ruler.html(i + 'cm');
+                ruler.html((i * 10) + 'cm');
                 measurementBar.append(ruler);
 
             }
