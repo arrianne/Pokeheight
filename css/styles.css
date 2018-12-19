@@ -89,10 +89,32 @@ h2 {
     border-color: none;
 }
 
+
+/* Styling and animating the pokeball submit button */
+
 .pokeball {
     width: 100px;
     margin-bottom: 50px;
+    transition-property: transform;
+    transition-duration: 1s;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
+
+.pokeball:hover {
+    animation-name: rotate;
+    -webkit-transform: rotate(1800deg);
+    transform: rotate(180deg);
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+/* ////////////////////////////////////////////////// */
+
 
 #pokemon-height {
     color: white;
@@ -166,6 +188,7 @@ h2 {
     min-width: 70%;
 }
 
+
 .box {
     font-size: 14px;
     text-align: left;
@@ -192,4 +215,6 @@ h2 {
     margin-top: 23px;
     float: right;
 }
+
+
 

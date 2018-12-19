@@ -25,6 +25,11 @@ $(document ).ready(() => {
                         humanHeight = 17, //This is taken from average human height of 175cm
                         pokemonHeight = response.height; //This is taking the height given from API for the pokemon selected
 
+
+                    if (pokemonHeight <= 5) {
+                        imgZoom();
+                    }
+
                     if (pokemonHeight >= cap) {
                         // If the pokemon is bigger than the current cap height of 21 then just make the pokemon height the new cap height
                         cap = pokemonHeight
@@ -41,6 +46,13 @@ $(document ).ready(() => {
 
                     //Calling the measurement bar animation based on pokemon height from API
                     animateProgressBar(response.height);
+
+
+
+                    $(function() {
+                        $('.pokemon-image').magnify();
+                    });
+
 
 
                 //If the user doesn't type anything or what they type isn't actually a Pokemon
@@ -131,6 +143,21 @@ $(document ).ready(() => {
             }
 
         }
+
+        function imgZoom() {
+
+            $('#sprite').okzoom({
+                width: 250,
+                height: 250,
+                round: true,
+                scaleWidth: 150,
+                background: '#5a5b9f',
+                shadow: "0 0 5px #000",
+                border: "1px solid white"
+            });
+        }
+
+
 
     });
 
