@@ -25,7 +25,6 @@ $(document ).ready(() => {
                         humanHeight = 17, //This is taken from average human height of 175cm
                         pokemonHeight = response.height; //This is taking the height given from API for the pokemon selected
 
-
                     if (pokemonHeight <= 5) {
                         imgZoom();
                     }
@@ -153,11 +152,9 @@ $(document ).ready(() => {
                 scaleWidth: 150,
                 background: '#5a5b9f',
                 shadow: "0 0 5px #000",
-                border: "1px solid white"
+                border: "1px solid white",
             });
         }
-
-
 
     });
 
