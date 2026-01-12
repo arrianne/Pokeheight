@@ -1,163 +1,135 @@
-$(document ).ready(() => {
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("form");
+  const searchText = document.getElementById("searchText");
+  const pokemonHeightEl = document.getElementById("pokemon-height");
+  const progBar = document.getElementById("progBar");
+  const sprite = document.getElementById("sprite");
+  const measurementBar = document.querySelector(".measurement-bar");
+  const personImage = document.querySelector(".person-image");
 
-    // When the user clicks on the submit button
-    $('#form').on("submit", function (e) {
+  // --- Small helper: animate an element's height (in %) over duration ---
+  function animateHeightPercent(element, toPercent, duration = 2000) {
+    if (!element) return;
 
-        // This stops the default action of an element from happening, in this case submitting the form
-        e.preventDefault();
+    const start = performance.now();
 
-        // This targets the form and takes the users input and will always make sure its lowercase
-        // (pokemon API needs it that way)
-        userInput = $('#searchText').val().toLowerCase();
+    // Current height (try to read from style first, else from computed)
+    const computed = getComputedStyle(element).height;
+    const startPx = parseFloat(computed) || 0;
 
-        // Starting the Ajax request to the Pokemon API
-        $.ajax ({
-            type: "GET",
-            url: 'https://pokeapi.co/api/v2/pokemon/' + userInput + '/',
+    // We want to animate to a percent height relative to parent
+    const parent = element.parentElement;
+    const parentPx = parent ? parent.getBoundingClientRect().height : 0;
+    const targetPx = parentPx ? (toPercent / 100) * parentPx : startPx;
 
-            success: function(response) {
+    function tick(now) {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
 
-                //Makes sure that the user has actually typed something
-                if ( userInput != '') {
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      const currentPx = startPx + (targetPx - startPx) * eased;
 
+      element.style.height = `${currentPx}px`;
 
-                    var cap = 21, //This is the biggest pokemon size that fits on the page in decimeters
-                        humanHeight = 17, //This is taken from average human height of 175cm
-                        pokemonHeight = response.height; //This is taking the height given from API for the pokemon selected
+      if (t < 1) requestAnimationFrame(tick);
+    }
 
-                    if (pokemonHeight <= 5) {
-                        imgZoom();
-                    }
+    requestAnimationFrame(tick);
+  }
 
-                    if (pokemonHeight >= cap) {
-                        // If the pokemon is bigger than the current cap height of 21 then just make the pokemon height the new cap height
-                        cap = pokemonHeight
-                    }
+  function animateProgressBar(pokemonHeight) {
+    const tallestHeight = 21;
+    const pokemonHeightPercent = (pokemonHeight / tallestHeight) * 100;
 
-                    //Take the height given in decimeteres from the api and turn into centimeters and print that out
-                    $("#pokemon-height").html(`${response.height * 10}cm tall!`);
+    // Ensure it has a parent with a fixed height in CSS for this to look right
+    animateHeightPercent(progBar, pokemonHeightPercent, 2000);
+  }
 
-                    changePokemonHeight(cap, pokemonHeight, userInput);
+  function changePokemonHeight(cap, height, userInput) {
+    const percentageHeight = (height / cap) * 100;
 
-                    changeHumanHeight(cap, humanHeight);
+    // NOTE: your original used http; use https to avoid mixed-content issues on https sites
+    sprite.src = `https://www.pokestadium.com/sprites/xy/${userInput}.gif`;
 
-                    setScale(cap, pokemonHeight);
+    animateHeightPercent(sprite, percentageHeight, 2000);
+  }
 
-                    //Calling the measurement bar animation based on pokemon height from API
-                    animateProgressBar(response.height);
+  function changeHumanHeight(cap, height) {
+    const percentageHeight = (height / cap) * 100;
+    animateHeightPercent(personImage, percentageHeight, 2000);
+  }
 
+  function setScale(cap) {
+    const increase = cap / 10;
 
+    // reset to zero each submit
+    if (measurementBar) measurementBar.innerHTML = "";
 
-                    $(function() {
-                        $('.pokemon-image').magnify();
-                    });
+    for (let i = 0; i <= cap; i = i + increase) {
+      const scalePosition = (i / cap) * 100;
 
+      const li = document.createElement("li");
+      li.className = "ruler";
+      li.style.bottom = `${scalePosition}%`;
+      li.innerHTML = `${Math.round(i * 10)}cm`;
 
+      measurementBar?.appendChild(li);
+    }
+  }
 
-                //If the user doesn't type anything or what they type isn't actually a Pokemon
-                } else {
-                    $("#pokemon-height").html("you didn't search for anything");
-                }
-            },
+  function imgZoom() {
+    // Original used: $('#sprite').okzoom({...})
+    // Vanilla alternative would require a different library or custom zoom code.
+    // Put your replacement here if you choose one later.
+  }
 
-            error: function (request, status, error) {
-                $("#pokemon-height").html('That is not a pokemon');
+  async function fetchPokemon(userInput) {
+    const url = `https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(
+      userInput
+    )}/`;
+    const res = await fetch(url);
 
-            }
-        });
+    if (!res.ok) throw new Error("Not a pokemon");
+    return res.json();
+  }
 
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-        function animateProgressBar(pokemonHeight) {
+    const userInput = (searchText?.value || "").toLowerCase().trim();
 
-            var tallestHeight = 21,
+    try {
+      const response = await fetchPokemon(userInput);
 
-                //Figuring out the height the bar should rise which will be the same height that is taken from api
-                pokemonHeightPercent = ((pokemonHeight) / tallestHeight ) * 100,
-                heightBar = $('#progBar');
+      if (userInput !== "") {
+        let cap = 21; // biggest pokemon size that fits on the page (dm)
+        const humanHeight = 17; // average human height (dm) ~ 175cm
+        const pokemonHeight = response.height; // dm from API
 
-            $(heightBar).animate( {
-                'height': pokemonHeightPercent + '%'
-            }, 2000 );
-
+        if (pokemonHeight <= 5) {
+          imgZoom();
         }
 
-
-        /**
-         * Function to get the sprite image from the user input then work out what size the pokemon image should be as a percentage of the cap size
-         * @param cap
-         * @param height
-         * @param userInput
-         */
-
-        function changePokemonHeight(cap, height, userInput) {
-            var percentageHeight = (height / cap) * 100;
-            //Getting the sprite image from api by using input search and adding to end of sprite url
-            //Change the size of the image as a percentage of the cap height
-            $("#sprite").attr("src", 'http://www.pokestadium.com/sprites/xy/' + userInput + '.gif')
-                .animate( {'height': percentageHeight + '%'}, 2000 );
-
+        if (pokemonHeight >= cap) {
+          cap = pokemonHeight;
         }
 
-        /**
-         * Function to change the height of the person image in relation to the cap
-         * @param cap
-         * @param height
-         */
-        function changeHumanHeight(cap, height) {
-            var percentageHeight = (height / cap) * 100;
-            //Change the size of the person as a percentage of the pokemon height
-            $(".person-image")
-                .animate( {'height': percentageHeight + '%'}, 2000 );
-        }
+        // dm -> cm
+        pokemonHeightEl.innerHTML = `${response.height * 10}cm tall!`;
 
-        /**
-         * Function that uses the cap height in order to determin the value of the ruler lines
-         * @param cap
-         */
+        changePokemonHeight(cap, pokemonHeight, userInput);
+        changeHumanHeight(cap, humanHeight);
+        setScale(cap);
+        animateProgressBar(response.height);
 
-        function setScale(cap) {
-            var measurementBar = $('.measurement-bar'),
-                increase = (cap / 10);
-
-            // Making sure that the measurement bar is reset to zero by default every time form is submitted
-            measurementBar.empty();
-
-            // Loop through and get set the li measurement number as 10 percent of the pokemon height
-            for (let i = 0; i <= cap ; i = i + increase) {
-
-                var scalePosition = (i / cap) * 100;
-
-                // creating an element object for our li
-                var element = {
-                    class: "ruler",
-                    css: {
-                        "bottom": scalePosition + '%'
-                    }
-                };
-
-                var ruler = $('<li>', element);
-                ruler.html(Math.round(i * 10) + 'cm');
-                measurementBar.append(ruler);
-
-            }
-
-        }
-
-        function imgZoom() {
-
-            $('#sprite').okzoom({
-                width: 250,
-                height: 250,
-                round: true,
-                scaleWidth: 150,
-                background: '#5a5b9f',
-                shadow: "0 0 5px #000",
-                border: "1px solid white",
-            });
-        }
-
-    });
-
+        // Original used: $('.pokemon-image').magnify();
+        // Vanilla replacement would go here if you pick a magnifier approach/library.
+      } else {
+        pokemonHeightEl.innerHTML = "you didn't search for anything";
+      }
+    } catch (err) {
+      pokemonHeightEl.innerHTML = "That is not a pokemon";
+    }
+  });
 });
-
-
